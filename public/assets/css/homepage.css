@@ -1,0 +1,22 @@
+.hover-btn {
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.hover-btn:hover {
+  background-color: #f8f9fa; /* Bootstrap primary color */
+  color: rgb(0, 0, 0); /* Change text color to white on hover */
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+#avatarImg {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.your-overlaying-element {
+  pointer-events: none; /* Allows clicks to pass through */
+}
+
+canvas {
+  position: absolute;
+}

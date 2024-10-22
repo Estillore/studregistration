@@ -1,0 +1,9 @@
+.inputLogin::placeholder {
+  font-size: 15px;
+  opacity: 0.25; /* Apply the desired opacity to the placeholder */
+  color: #000; /* Optionally set the placeholder color */
+}
+
+.progress-bar {
+  transition: width 0.5s ease;
+}
