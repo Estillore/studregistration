@@ -57,4 +57,31 @@ class userPage extends BaseController
 
         return $this->response->setJSON($response);
     }
+
+    public function uploadImage()
+    {
+        $image = $this->request->getFile('image');
+
+        if ($image && $image->isValid() && !$image->hasMoved()) {
+            $uploadPath = WRITEPATH . 'uploads'; 
+    
+            $image->move($uploadPath);
+    
+            $newFileName = $image->getName();
+    
+            $response = [
+                'status' => true,
+                'message' => 'Image uploaded successfully.',
+                'fileName' => $newFileName,
+                'filePath' => $uploadPath . '/' . $newFileName
+            ];
+        } else {
+            $response = [
+                'status' => false,
+                'message' => 'File upload failed!',
+            ];
+        }
+
+        return $this->response->setJSON($response);
+    }
 }

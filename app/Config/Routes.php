@@ -15,3 +15,4 @@ $routes->get('/sidebar' , 'firstPage::getSidebar');
 //the user should only have a ID form to fill up. nothing else. 
 $routes->get('/userPage' , 'userPage::index');
 $routes->post('/createUser' , 'userPage::createUser');
+$routes->post('/uploadimage' , 'userPage::uploadImage');

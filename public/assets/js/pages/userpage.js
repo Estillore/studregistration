@@ -2,9 +2,19 @@ import { navBar } from "../templates/header.js";
 import { updateAvatar } from "../pages/profilepage.js";
 
 const appContainer = document.getElementById("app");
-navBar(appContainer);
+const sessionData = JSON.parse(localStorage.getItem("sessionData"));
 
-const userpage = async (appContainer) => {
+let userData = [];
+const sessions = sessionData.session;
+userData.push(sessions);
+
+navBar(appContainer, userData);
+
+export const userpage = async (appContainer) => {
+  if (sessionData) {
+    console.log(sessionData.session);
+  }
+
   appContainer.innerHTML += `
         <div class="container-fluid text-center"> 
             <div class="container border mt-3 p-3" style="width:800px; height:auto;">
@@ -117,7 +127,7 @@ const userpage = async (appContainer) => {
 
         const display = document.getElementById("display");
         display.innerHTML = "";
-        updateAvatar(display);
+        updateAvatar(display, form);
       }, 0);
     });
 };

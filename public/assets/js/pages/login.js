@@ -30,6 +30,8 @@ const login = () => {
 };
 
 //backend
+let sessionData = null;
+
 const userLogin = (submitBtn, form) => {
   const userForm = form;
   submitBtn.addEventListener("click", async (e) => {
@@ -44,6 +46,7 @@ const userLogin = (submitBtn, form) => {
     const data = await response.json();
 
     if (data.status === "success") {
+      localStorage.setItem("sessionData", JSON.stringify(data));
       window.location.href = "/userPage";
     } else {
       console.log("invalid login");

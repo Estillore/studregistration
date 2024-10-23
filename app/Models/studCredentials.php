@@ -21,4 +21,8 @@ class studCredentials extends Model
         return false;
     }
     
+    public function getUser($idnumber)
+    {
+        return $this->where('studid', $idnumber)->first();
+    }
 }

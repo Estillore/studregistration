@@ -35,11 +35,23 @@ class Home extends BaseController
         $isValid = $this->studModel->loginVal($data);
 
         if($isValid){
-            $response = ['status' => 'success', 'data' => $data, 'valid' => $isValid];
+            $userData = $this->studModel->getUser($idnumber);
+
+            $session = session();
+            $session->set($userData);
+            $session->set('loggedIn',true);
+            $userSession = $session->get();
+
+            $response = ['status' => 'success', 'session' => $userSession, 'valid' => $isValid];
         }else{
             $response = ['status' => 'error', 'data' => $data, 'valid' => $isValid];
         }
 
         return $this->response->setJSON($response);
+    }
+
+    public function userProgress()
+    {
+        //todo: make user progress.
     }
 }

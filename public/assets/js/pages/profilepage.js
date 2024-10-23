@@ -1,101 +1,130 @@
-export const updateAvatar = (display) => {
+export const updateAvatar = (display, form) => {
   display.innerHTML += `
-    <div class="container d-flex justify-content-center align-items-center" style="height: 300px;">
-      <div class="position-relative">
-        <video id="camera" width="300" height="300" class="position-absolute" autoplay muted></video>
-        <canvas id="overlay" width="300" height="300" class="position-absolute"></canvas>
-      </div>
-      <div id="statusMessage" style="color: red; margin-top: 10px;"></div>
+    <div class="container d-flex flex-column align-items-center" style="height: 300px;">
+        <div class="border" style="width:250px; height:250px;">
+          <img id="imagePreview" style="width:250px; height:250px;" />
+        </div>
+        <input type="file" class="form-control m-3" id="inputGroupFile02" name="imageUpload" style="width:250px;">
+        <canvas class="position-absolute" id="overlay" width="300" height="300" style="display: none;"></canvas>
+        <div id="statusMessage" style="color: red; margin-top: 10px;"></div>
     </div>
   `;
 
-  const camera = document.getElementById("camera");
   const canvas = document.getElementById("overlay");
   const context = canvas.getContext("2d");
   const statusMessage = document.getElementById("statusMessage");
+  const imageUpload = document.getElementById("inputGroupFile02");
+  const imagePreview = document.getElementById("imagePreview");
 
-  const captureImage = () => {
-    context.drawImage(camera, 0, 0, canvas.width, canvas.height);
-    const imageData = canvas.toDataURL("image/png");
-    sendImageToServer(imageData);
+  const loadModels = async () => {
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(
+        "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/tiny_face_detector_model-weights_manifest.json"
+      ),
+      faceapi.nets.faceLandmark68Net.loadFromUri(
+        "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_landmark_68_model-weights_manifest.json"
+      ),
+      faceapi.nets.faceRecognitionNet.loadFromUri(
+        "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_recognition_model-weights_manifest.json"
+      ),
+      faceapi.nets.faceExpressionNet.loadFromUri(
+        "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_expression_model-weights_manifest.json"
+      )
+    ]);
+    console.log("Face-api models loaded.");
   };
 
-  const startVideo = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        camera.srcObject = stream;
-        camera.addEventListener("play", () => {
-          const displaySize = { width: camera.width, height: camera.height };
-          faceapi.matchDimensions(canvas, displaySize);
+  imageUpload.addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const img = new Image();
+      const reader = new FileReader();
 
-          const intervalId = setInterval(async () => {
-            if (!camera.paused && !camera.ended) {
-              try {
-                const detections = await faceapi
-                  .detectAllFaces(camera, new faceapi.TinyFaceDetectorOptions())
-                  .withFaceLandmarks()
-                  .withFaceExpressions();
+      reader.onload = (e) => {
+        img.src = e.target.result;
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = "block";
+      };
 
-                const resizedDetections = faceapi.resizeResults(
-                  detections,
-                  displaySize
-                );
+      img.onload = async () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
 
-                context.clearRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                faceapi.draw.drawDetections(canvas, resizedDetections);
-                faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
-                faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
+        try {
+          const detections = await faceapi
+            .detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceExpressions();
 
-                if (resizedDetections.length > 0) {
-                  const landmarks = resizedDetections[0].landmarks.positions;
-                  const nose = landmarks[30];
-                  const leftEye = landmarks[36];
-                  const rightEye = landmarks[45];
+          const resizedDetections = faceapi.resizeResults(detections, {
+            width: canvas.width,
+            height: canvas.height
+          });
 
-                  const eyeCenterX = (leftEye.x + rightEye.x) / 2;
-                  const isLookingStraight = Math.abs(nose.x - eyeCenterX) < 30;
-                  const isInProfile = nose.x < leftEye.x || nose.x > rightEye.x;
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          faceapi.draw.drawDetections(canvas, resizedDetections);
+          faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+          faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 
-                  if (isLookingStraight && !isInProfile) {
-                    statusMessage.textContent = "Face Approved!";
-                    statusMessage.style.color = "green";
+          if (resizedDetections.length > 0) {
+            const landmarks = resizedDetections[0].landmarks.positions;
+            const nose = landmarks[30];
+            const leftEye = landmarks[36];
+            const rightEye = landmarks[45];
 
-                    captureImage();
-                  } else {
-                    statusMessage.textContent = "Face Not Valid!";
-                    statusMessage.style.color = "red";
-                  }
-                }
-              } catch (error) {
-                console.error("Face detection error:", error);
-              }
+            const eyeCenterX = (leftEye.x + rightEye.x) / 2;
+            const isLookingStraight = Math.abs(nose.x - eyeCenterX) < 30;
+            const isInProfile = nose.x < leftEye.x || nose.x > rightEye.x;
+
+            if (isLookingStraight && !isInProfile) {
+              statusMessage.textContent = "Face Approved!";
+              statusMessage.style.color = "green";
+
+              // Upload the image after face approval
+              await uploadImage(file, form);
             } else {
-              clearInterval(intervalId);
+              statusMessage.textContent = "Face Not Valid!";
+              statusMessage.style.color = "red";
             }
-          }, 200);
-        });
-      })
-      .catch((err) => console.error("Error accessing camera: ", err));
-  };
+          } else {
+            statusMessage.textContent = "No face detected!";
+            statusMessage.style.color = "red";
+          }
+        } catch (error) {
+          console.error("Face detection error:", error);
+          statusMessage.textContent = "Error during detection!";
+          statusMessage.style.color = "red";
+        }
+      };
 
-  Promise.all([
-    faceapi.nets.tinyFaceDetector.loadFromUri(
-      "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/tiny_face_detector_model-weights_manifest.json"
-    ),
-    faceapi.nets.faceLandmark68Net.loadFromUri(
-      "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_landmark_68_model-weights_manifest.json"
-    ),
-    faceapi.nets.faceRecognitionNet.loadFromUri(
-      "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_recognition_model-weights_manifest.json"
-    ),
-    faceapi.nets.faceExpressionNet.loadFromUri(
-      "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_expression_model-weights_manifest.json"
-    )
-  ]).then(startVideo);
+      reader.readAsDataURL(file);
+    }
+  });
 
-  const sendImageToServer = (imageData) => {
-    console.log(imageData);
-  };
+  loadModels();
+};
+
+const uploadImage = async (file, form) => {
+  try {
+    const myform = new FormData(form);
+    myform.append("image", file);
+
+    const response = await fetch("/uploadimage", {
+      method: "POST",
+      body: myform
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log("Image uploaded successfully:", result);
+    } else {
+      console.error("Upload failed:", result);
+    }
+  } catch (error) {
+    console.error("Error uploading image:", error);
+  }
 };
