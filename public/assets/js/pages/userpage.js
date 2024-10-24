@@ -11,10 +11,6 @@ userData.push(sessions);
 navBar(appContainer, userData);
 
 export const userpage = async (appContainer) => {
-  if (sessionData) {
-    console.log(sessionData.session);
-  }
-
   appContainer.innerHTML += `
         <div class="container-fluid text-center"> 
             <div class="container border mt-3 p-3" style="width:800px; height:auto;">
@@ -24,7 +20,7 @@ export const userpage = async (appContainer) => {
                     </div>
                 </div>
                 <form id="myform" class="position-relative justify-content-center">
-                    <div class="container-fluid p-3" style="font-size:15px;" id="display">
+                    <div class="container-fluid p-3" style="font-size:15px; width:762px; height:500px;" id="display">
                         <div class="row mb-3">
                             <div class="col-md-6 text-start">
                                 <label for="studentName" class="form-label">Student Name</label>
@@ -93,6 +89,7 @@ export const userpage = async (appContainer) => {
 
   const form = document.getElementById("myform");
   const bar = document.getElementById("progressBar");
+  const page = "stage1";
 
   document
     .getElementById("submitBtn")
@@ -119,6 +116,27 @@ export const userpage = async (appContainer) => {
       bar.style.width = "50%";
       bar.textContent = "Update Avatar";
 
+      const session_data = localStorage.getItem("sessionData");
+      let user_id = null;
+
+      if (session_data) {
+        const parsed_data = JSON.parse(session_data);
+        const user_data = parsed_data.session;
+        user_id = user_data.studid;
+      }
+
+      const progress_response = await fetch("/updateProgress", {
+        method: "POST",
+        body: JSON.stringify({
+          userid: user_id,
+          stage: page,
+          progress: "100"
+        })
+      });
+
+      const progress_data = await progress_response.json();
+      console.log(progress_data);
+
       setTimeout(() => {
         const loader = document.getElementById("loader");
         if (loader) {
@@ -130,6 +148,14 @@ export const userpage = async (appContainer) => {
         updateAvatar(display, form);
       }, 0);
     });
+
+  userData.forEach((user) => {
+    if (user.user_stage === "stage1") {
+      const display = document.getElementById("display");
+      display.innerHTML = "";
+      updateAvatar(display, form);
+    }
+  });
 };
 
 userpage(appContainer);

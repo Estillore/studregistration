@@ -3,13 +3,16 @@
 namespace App\Controllers;
 
 use App\Models\IDcredentials;
+use App\Models\studCredentials;
 
 class userPage extends BaseController
 {
     protected $idCred;
+    protected $stud_credentials;
 
     public function __construct()
     {
+        $this->stud_credentials = new studCredentials();
         $this->idCred = new IDcredentials();
     }
 
@@ -61,27 +64,62 @@ class userPage extends BaseController
     public function uploadImage()
     {
         $image = $this->request->getFile('image');
+        $userid = $this->request->getPost('user_id');
 
         if ($image && $image->isValid() && !$image->hasMoved()) {
-            $uploadPath = WRITEPATH . 'uploads'; 
+            $uploadPath = WRITEPATH . 'uploads/'.$userid; 
     
             $image->move($uploadPath);
     
             $newFileName = $image->getName();
-    
-            $response = [
-                'status' => true,
-                'message' => 'Image uploaded successfully.',
-                'fileName' => $newFileName,
-                'filePath' => $uploadPath . '/' . $newFileName
-            ];
+
+            if($newFileName){
+                $this->idCred->updateUserImage($userid, $newFileName);
+
+                $response = [
+                    'status' => true,
+                    'message' => 'Image uploaded successfully.',
+                    'fileName' => $newFileName,
+                    'filePath' => $uploadPath . '/' . $newFileName
+                ];
+
+                return $this->response->setJSON($response);
+            }else{
+                $response = [
+                    'status' => false,
+                    'message' => 'File upload failed!',
+                ];
+
+                return $this->response->setJSON($response);
+
+            }
         } else {
             $response = [
                 'status' => false,
                 'message' => 'File upload failed!',
             ];
+
+            return $this->response->setJSON($response);
+
         }
 
-        return $this->response->setJSON($response);
+    }
+
+    public function updateProgress()
+    {
+        $input = $this->request->getJSON();
+
+        if($input){
+            $user_id = $input->userid ?? null;
+            $user_stage = $input->stage ?? null;
+            $user_progress = $input->progress ?? null;
+
+            if($user_id && $user_stage && $user_progress){
+                $this->stud_credentials->update_progress($user_id, $user_stage, $user_progress);
+                return $this->response->setJSON([
+                    'status' => true
+                ]);
+            }
+        }
     }
 }

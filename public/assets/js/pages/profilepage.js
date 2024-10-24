@@ -1,4 +1,4 @@
-export const updateAvatar = (display, form) => {
+export const updateAvatar = async (display, form) => {
   display.innerHTML += `
     <div class="container d-flex flex-column align-items-center" style="height: 300px;">
         <div class="border" style="width:250px; height:250px;">
@@ -86,6 +86,7 @@ export const updateAvatar = (display, form) => {
 
               // Upload the image after face approval
               await uploadImage(file, form);
+              saved_progress();
             } else {
               statusMessage.textContent = "Face Not Valid!";
               statusMessage.style.color = "red";
@@ -110,8 +111,20 @@ export const updateAvatar = (display, form) => {
 
 const uploadImage = async (file, form) => {
   try {
+    const session_data = localStorage.getItem("sessionData");
+
+    let user_id = null;
+
+    if (session_data) {
+      const parsed_data = JSON.parse(session_data);
+      const user_data = parsed_data.session;
+      user_id = user_data.studid;
+    }
+
     const myform = new FormData(form);
+
     myform.append("image", file);
+    myform.append("user_id", user_id);
 
     const response = await fetch("/uploadimage", {
       method: "POST",
@@ -127,4 +140,15 @@ const uploadImage = async (file, form) => {
   } catch (error) {
     console.error("Error uploading image:", error);
   }
+};
+
+const saved_progress = () => {
+  const bar = document.getElementById("progressBar");
+  const display = document.getElementById("display");
+
+  bar.style.width = "75%";
+  bar.textContent = "Waiting for approval";
+
+  display.innerHTML = "";
+  display.innerHTML = "waiting for approval"; //make UI.
 };

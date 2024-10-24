@@ -16,3 +16,4 @@ $routes->get('/sidebar' , 'firstPage::getSidebar');
 $routes->get('/userPage' , 'userPage::index');
 $routes->post('/createUser' , 'userPage::createUser');
 $routes->post('/uploadimage' , 'userPage::uploadImage');
+$routes->post('/updateProgress' , 'userPage::updateProgress');
