@@ -14,7 +14,7 @@ const login = () => {
                 </div>
                 <div class="mb-3">
                     <label for="inputLogin" class="form-label fw-semibold" style="font-size:15px;">Password</label>
-                    <input type="" class="form-control form-control-sm fs-medium inputLogin" id="password" name="password" placeholder="Enter Password">
+                    <input type="password" class="form-control form-control-sm fs-medium inputLogin" id="password" name="password" placeholder="Enter Password">
                 </div>
                 <div class="mt-5 d-grid">
                     <button class="btn btn-sm btn-primary btn-block fw-normal" id="submitBtn">Submit</button>

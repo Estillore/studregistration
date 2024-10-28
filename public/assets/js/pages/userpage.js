@@ -1,5 +1,6 @@
 import { navBar } from "../templates/header.js";
 import { updateAvatar } from "../pages/profilepage.js";
+import { approvalPage } from "../pages/approval.js";
 
 const appContainer = document.getElementById("app");
 const sessionData = JSON.parse(localStorage.getItem("sessionData"));
@@ -117,6 +118,7 @@ export const userpage = async (appContainer) => {
       bar.textContent = "Update Avatar";
 
       const session_data = localStorage.getItem("sessionData");
+      console.log(session_data);
       let user_id = null;
 
       if (session_data) {
@@ -154,6 +156,12 @@ export const userpage = async (appContainer) => {
       const display = document.getElementById("display");
       display.innerHTML = "";
       updateAvatar(display, form);
+    }
+
+    if (user.user_stage === "stage2") {
+      const display = document.getElementById("display");
+      display.innerHTML = "";
+      approvalPage();
     }
   });
 };

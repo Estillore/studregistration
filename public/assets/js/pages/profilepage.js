@@ -1,3 +1,16 @@
+// const user_progress = async () => {
+//   const user_response = await fetch("getUserCredit", { method: "GET" });
+//   const user_data = await user_response.json();
+//   const progress = user_data.user_data;
+//   for (let i = 0; i < progress.length; i++) {
+//     if (progress.user_stage === "stage2" && progress.user_progress === "100") {
+//       console.log("render the other page");
+//     }
+//   }
+// };
+
+// user_progress();
+
 export const updateAvatar = async (display, form) => {
   display.innerHTML += `
     <div class="container d-flex flex-column align-items-center" style="height: 300px;">
@@ -88,7 +101,8 @@ export const updateAvatar = async (display, form) => {
               await uploadImage(file, form);
               saved_progress();
             } else {
-              statusMessage.textContent = "Face Not Valid!";
+              statusMessage.textContent =
+                "Face Not Valid, Upload another picture.";
               statusMessage.style.color = "red";
             }
           } else {
@@ -110,6 +124,8 @@ export const updateAvatar = async (display, form) => {
 };
 
 const uploadImage = async (file, form) => {
+  let page = "stage2";
+
   try {
     const session_data = localStorage.getItem("sessionData");
 
@@ -137,6 +153,35 @@ const uploadImage = async (file, form) => {
     } else {
       console.error("Upload failed:", result);
     }
+
+    //update user progress
+    const user_progress = await fetch("updateProgress", {
+      method: "POST",
+      body: JSON.stringify({
+        userid: user_id,
+        stage: page,
+        progress: "100"
+      })
+    });
+
+    const progress_data = await user_progress.json();
+
+    if (user_progress.ok) {
+      const user_response = await fetch("getUserCredit", { method: "GET" });
+      const user_promise = await user_response.json();
+      console.log(user_promise);
+    }
+
+    const user_status = await fetch("/statusUpdate", {
+      method: "POST",
+      body: JSON.stringify({
+        userid: user_id,
+        status: "waiting"
+      })
+    });
+
+    const status_data = await user_status.json();
+    console.log(status_data);
   } catch (error) {
     console.error("Error uploading image:", error);
   }
@@ -150,5 +195,5 @@ const saved_progress = () => {
   bar.textContent = "Waiting for approval";
 
   display.innerHTML = "";
-  display.innerHTML = "waiting for approval"; //make UI.
+  display.innerHTML = "waiting for approval";
 };

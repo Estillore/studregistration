@@ -117,7 +117,38 @@ class userPage extends BaseController
             if($user_id && $user_stage && $user_progress){
                 $this->stud_credentials->update_progress($user_id, $user_stage, $user_progress);
                 return $this->response->setJSON([
-                    'status' => true
+                    'status' => true,
+                    'stage' => $user_stage,
+                    'progress' => $user_progress
+                ]);
+            }
+        }
+    }
+
+    public function getUserProgress()
+    {
+        $response = [
+            'status' => true,
+            'user_data' => $this->stud_credentials->findAll()
+        ];
+
+        return $this->response->setJSON($response);
+    }
+
+    public function statusUpdate()
+    {
+        $input = $this->request->getJSON();
+
+        if($input){
+            $user_status = $input->status ?? null;
+            $user_id = $input->userid ?? null;
+
+            if($user_status){
+                $this->stud_credentials->userstatus($user_status, $user_id);
+                return $this->response->setJSON([
+                    'status' => true,
+                    'userid' => $user_id,
+                    'status_code' => $user_status
                 ]);
             }
         }
