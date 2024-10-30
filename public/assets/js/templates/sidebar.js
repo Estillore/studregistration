@@ -4,7 +4,7 @@ export const sideBar = async (appContainer) => {
   const names = data.sidebar;
 
   appContainer.innerHTML += `
-    <div class="d-flex" style="width:250px; height:863px; d-flex">
+    <div class="d-flex" style="width:100vw; height:863px; d-flex">
       <div class="border-end bg-body-light">
           <ul class="list-unstyled" id="listContainer">
             

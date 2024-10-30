@@ -120,10 +120,11 @@ export const userpage = async (appContainer) => {
       const session_data = localStorage.getItem("sessionData");
       console.log(session_data);
       let user_id = null;
-
+      let user_name = null;
       if (session_data) {
         const parsed_data = JSON.parse(session_data);
         const user_data = parsed_data.session;
+        user_name = user_data.studname;
         user_id = user_data.studid;
       }
 
@@ -138,6 +139,17 @@ export const userpage = async (appContainer) => {
 
       const progress_data = await progress_response.json();
       console.log(progress_data);
+
+      const updateUserId = await fetch("/updateUserId", {
+        method: "POST",
+        body: JSON.stringify({
+          userid: user_id,
+          username: user_name
+        })
+      });
+
+      const update_promise = await updateUserId.json();
+      console.log(update_promise);
 
       setTimeout(() => {
         const loader = document.getElementById("loader");

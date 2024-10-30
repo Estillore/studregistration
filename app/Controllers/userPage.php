@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\IDcredentials;
+use App\Models\idCredentials;
 use App\Models\studCredentials;
 
 class userPage extends BaseController
@@ -13,7 +13,7 @@ class userPage extends BaseController
     public function __construct()
     {
         $this->stud_credentials = new studCredentials();
-        $this->idCred = new IDcredentials();
+        $this->idCred = new idCredentials();
     }
 
     public function index()
@@ -77,6 +77,7 @@ class userPage extends BaseController
                 $this->idCred->updateUserImage($userid, $newFileName);
 
                 $response = [
+                    'userid' => $userid,
                     'status' => true,
                     'message' => 'Image uploaded successfully.',
                     'fileName' => $newFileName,
@@ -152,5 +153,27 @@ class userPage extends BaseController
                 ]);
             }
         }
+    }
+
+    public function updateUserId()
+    {
+        $input = $this->request->getJSON();
+
+        if($input){
+            $userid = $input->userid ?? null;
+            $username = $input->username ?? null;
+
+            if($username && $userid){
+                $this->idCred->updateUserId($userid,$username);
+            }
+        }
+
+        $response = [
+            'status' => true,
+            'userid' => $input->userid ?? null,
+            'username' => $input->username ?? null
+        ];
+
+        return $this->response->setJSON($response);
     }
 }

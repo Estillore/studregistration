@@ -45,7 +45,10 @@ const userLogin = (submitBtn, form) => {
 
     const data = await response.json();
 
-    if (data.status === "success") {
+    if (data.role === "admin" && data.status === "success") {
+      localStorage.setItem("sessionData", JSON.stringify(data));
+      window.location.href = "/Home";
+    } else if (data.status === "success") {
       localStorage.setItem("sessionData", JSON.stringify(data));
       window.location.href = "/userPage";
     } else {

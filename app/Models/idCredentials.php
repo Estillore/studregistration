@@ -29,4 +29,15 @@ class idCredentials extends Model
 
         return false;
     }
+
+    public function updateUserId($userid,$username)
+    {
+        $student = $this->where('studentname', $username)->first();
+
+        if($student){
+            return $this->update($student['id'], [
+                'userid' => $userid
+            ]);
+        }
+    }
 }

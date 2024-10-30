@@ -1,4 +1,5 @@
 export const navBar = (appContainer, userData) => {
+  console.log(userData);
   userData.forEach((user) => {
     appContainer.innerHTML += `
     <nav class="navbar bg-body-light border-bottom">

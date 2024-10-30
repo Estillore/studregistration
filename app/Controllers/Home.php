@@ -3,13 +3,16 @@
 namespace App\Controllers;
 
 use App\Models\studCredentials;
+use App\Models\admin;
 
 class Home extends BaseController
 {
     protected $studModel;
+    protected $adminModel;
 
     public function __construct()
     {
+        $this->adminModel = new admin();
         $this->studModel = new studCredentials();
     }
 
@@ -32,26 +35,37 @@ class Home extends BaseController
             'studpass' => $password
         ];
 
-        $isValid = $this->studModel->loginVal($data);
+        $isValid = $this->studModel->loginVal($data);   
 
         if($isValid){
-            $userData = $this->studModel->getUser($idnumber);
-
-            $session = session();
-            $session->set($userData);
-            $session->set('loggedIn',true);
-            $userSession = $session->get();
-
-            $response = ['status' => 'success', 'session' => $userSession, 'valid' => $isValid];
-        }else{
+            if($data['studid'] === "admin" && $data['studpass'] === "admin"){
+                $session = session();
+                $session->set($data);
+                $session->set('loggedIn',true);
+                $userSession = $session->get();
+                $response = ['status' => 'success', 'role' => 'admin','session' => $userSession, 'valid' => $isValid];
+            } else {
+                $userData = $this->studModel->getUser($idnumber);
+                $session = session();
+                $session->set($userData);
+                $session->set('loggedIn',true);
+                $userSession = $session->get();
+                $response = ['status' => 'success', 'session' => $userSession, 'valid' => $isValid];
+            }
+        } else {
             $response = ['status' => 'error', 'data' => $data, 'valid' => $isValid];
         }
 
         return $this->response->setJSON($response);
     }
 
-    public function userProgress()
+    public function getStudents()
     {
-        //todo: make user progress.
+        $response = [
+            'status' => true,
+            'data' => $this->studModel->findAll()
+        ];
+
+        return $this->response->setJSON($response);
     }
 }

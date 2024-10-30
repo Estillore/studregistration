@@ -97,7 +97,6 @@ export const updateAvatar = async (display, form) => {
               statusMessage.textContent = "Face Approved!";
               statusMessage.style.color = "green";
 
-              // Upload the image after face approval
               await uploadImage(file, form);
               saved_progress();
             } else {
@@ -130,7 +129,6 @@ const uploadImage = async (file, form) => {
     const session_data = localStorage.getItem("sessionData");
 
     let user_id = null;
-
     if (session_data) {
       const parsed_data = JSON.parse(session_data);
       const user_data = parsed_data.session;
@@ -148,8 +146,9 @@ const uploadImage = async (file, form) => {
     });
 
     const result = await response.json();
+    console.log(result);
     if (response.ok) {
-      console.log("Image uploaded successfully:", result);
+      console.log("Upload successful:", result);
     } else {
       console.error("Upload failed:", result);
     }
