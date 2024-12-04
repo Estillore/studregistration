@@ -40,4 +40,12 @@ class idCredentials extends Model
             ]);
         }
     }
+
+    public function studentCredentials($studentid)
+    {   
+        if (is_array($studentid)) {
+            $user_exist = $this->whereIn('userid', $studentid)->find();
+            return $user_exist;
+        }
+    }
 }

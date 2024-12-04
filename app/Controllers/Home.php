@@ -4,16 +4,20 @@ namespace App\Controllers;
 
 use App\Models\studCredentials;
 use App\Models\admin;
+use App\Models\idcredentials;
 
 class Home extends BaseController
 {
     protected $studModel;
     protected $adminModel;
+    protected $studInformation;
 
     public function __construct()
     {
+
         $this->adminModel = new admin();
         $this->studModel = new studCredentials();
+        $this->studInformation = new idCredentials();
     }
 
     public function index(): string

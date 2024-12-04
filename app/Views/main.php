@@ -12,7 +12,8 @@
     <title>Student Credentials</title>
 </head>
 <body>
-    <div id='app'></div>
+    <div id='app'>
+    </div>
     <script type="module" src="<?= $content ?>"></script>
 </body>
 </html>

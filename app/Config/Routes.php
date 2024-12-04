@@ -22,3 +22,7 @@ $routes->post('/statusUpdate' , 'userPage::statusUpdate');
 $routes->post('/uploadimage' , 'userPage::uploadImage');
 $routes->post('/updateProgress' , 'userPage::updateProgress');
 $routes->post('/updateUserId' , 'userPage::updateUserId');
+
+//get user credits
+$routes->post('/getStudentCredits', 'userPage::userCredentials');
+$routes->post('/userApproval' , 'userPage::requestApproval');

@@ -53,4 +53,19 @@ class studCredentials extends Model
             ]);
         }
     }
+
+    public function userApproval($userid)
+    {
+        $user_exist = $this->where('studid', $userid)->first();
+
+        if ($user_exist) {
+            $this->where('studid', $userid)
+                 ->set('status', 'approved')  
+                 ->update();
+                return $user_exist;
+
+        } else {
+            return false;
+        }
+    }
 }

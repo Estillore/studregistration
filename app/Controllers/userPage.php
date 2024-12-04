@@ -67,7 +67,7 @@ class userPage extends BaseController
         $userid = $this->request->getPost('user_id');
 
         if ($image && $image->isValid() && !$image->hasMoved()) {
-            $uploadPath = WRITEPATH . 'uploads/'.$userid; 
+            $uploadPath = FCPATH . 'uploads/'.$userid; 
     
             $image->move($uploadPath);
     
@@ -175,5 +175,27 @@ class userPage extends BaseController
         ];
 
         return $this->response->setJSON($response);
+    }
+
+    public function userCredentials()
+    {   
+        $input = $this->request->getPost('student_data'); 
+        
+        if($input){
+            $result = $this->idCred->studentCredentials($input);
+            return $this->response->setJSON($result);
+        }
+    }
+    
+
+    public function requestApproval()
+    {
+        $json_input = $this->request->getBody();
+
+        $input_array = json_decode($json_input, true);
+        $result = $this->stud_credentials->userApproval($input_array);
+
+        return $this->response->setJSON($result);
+
     }
 }
