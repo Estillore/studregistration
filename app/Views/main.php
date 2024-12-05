@@ -9,6 +9,7 @@
     <script defer src="https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/dist/face-api.min.js"></script>
     <link rel="stylesheet" href="assets/css/login.css">
     <link rel="stylesheet" href="assets/css/homepage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <title>Student Credentials</title>
 </head>
 <body>

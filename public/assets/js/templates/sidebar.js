@@ -6,7 +6,7 @@ export const sideBar = async (appContainer) => {
   appContainer.innerHTML += `
     <div class="d-flex" style="width:100vw; height:863px; d-flex">
       <div class="border-end bg-body-light">
-          <ul class="list-unstyled" id="listContainer">
+          <ul class="list-unstyled d-grid" id="listContainer">
             
           </ul>
       </div>
@@ -17,7 +17,7 @@ export const sideBar = async (appContainer) => {
   const listDisplay = document.getElementById("listContainer");
   names.forEach((nameVal) => {
     listDisplay.innerHTML += `
-        <li class="btn btn-sm btn-block hover-btn text-start fw-semibold" style="width: 250px;">
+        <li class="btn btn-sm btn-block hover-btn text-start fw-semibold mb-1" style="width: 250px;">
             <a href="${nameVal.link}" class="text-decoration-none text-dark d-flex align-items-center">
                 <i class="${nameVal.icons} me-2"></i>${nameVal.sidebar}
             </a>

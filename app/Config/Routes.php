@@ -26,3 +26,10 @@ $routes->post('/updateUserId' , 'userPage::updateUserId');
 //get user credits
 $routes->post('/getStudentCredits', 'userPage::userCredentials');
 $routes->post('/userApproval' , 'userPage::requestApproval');
+
+//generate pdf
+$routes->post('/generatepdf', 'userpage::makePdf');
+
+//checkList
+$routes->get('/Approved' , 'checkList::index');
+$routes->get('/studentIdCredits', 'userPage::getIdCredentials');

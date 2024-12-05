@@ -183,25 +183,65 @@ const homepage = async () => {
           studentid: studentIdValue
         };
 
-        // const form = document.getElementById("myForm");
-        // const formData = new FormData(form);
-
         const data_response = await fetch("/userApproval", {
           method: "POST",
           body: JSON.stringify(data)
         });
 
         const user_data = await data_response.json();
-        console.log(user_data);
-        console.log("click" + user.userid);
-
-        produceStudentPDF();
+        produceStudentPDF(user_data, formData);
       });
   });
 };
 
-const produceStudentPDF = () => {
-  console.log("producestudentPDF");
+const produceStudentPDF = async (user_data) => {
+  const form = document.getElementById("myForm");
+  const formData = new FormData(form);
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF();
+
+  let yPosition = 10;
+
+  const back = "/assets/images/back-1.jpg";
+  const front = "/assets/images/front-1.jpg";
+
+  pdf.addImage(front, "JPEG", 50, 10, 100, 100);
+  pdf.addImage(back, "JPEG", 50, 120, 100, 100);
+
+  Object.entries(user_data).forEach(([key, value]) => {
+    pdf.text(`${key}: ${value}`, 10, yPosition);
+    yPosition += 10;
+    console.log(`${key}: ${value}`);
+  });
+
+  const pdfBlob = pdf.output("blob");
+
+  formData.append("pdf", pdfBlob, "student_report.pdf");
+
+  const studentIds = [];
+  Object.entries(user_data).forEach(([key, value]) => {
+    if (key.startsWith("studid")) {
+      studentIds.push(value);
+    }
+  });
+
+  studentIds.forEach((id, index) => {
+    formData.append(`studid`, id);
+  });
+
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`);
+  }
+
+  const response = await fetch("/generatepdf", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+
+  //todo: compare user_data array to the idcredentials array table. then match the id to get the idcredentials user row.
 };
 
 homepage();

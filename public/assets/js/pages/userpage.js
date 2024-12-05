@@ -173,7 +173,7 @@ export const userpage = async (appContainer) => {
     if (user.user_stage === "stage2") {
       const display = document.getElementById("display");
       display.innerHTML = "";
-      approvalPage();
+      approvalPage(user);
     }
   });
 };

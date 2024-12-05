@@ -8,7 +8,7 @@ class idCredentials extends Model
 {
     protected $table = 'idcredentials';
     protected $primaryKey = "id";
-    protected $allowedFields = ['studentname','studentemail','studentphone','studentaddress','guardianname','guardianphone','guardianemail','alternativeaddress','emergencycontact','studentnumber','image','userid'];
+    protected $allowedFields = ['studentname','studentemail','studentphone','studentaddress','guardianname','guardianphone','guardianemail','alternativeaddress','emergencycontact','studentnumber','image','userid','pdf'];
 
     public function adduser($data)
     {
@@ -46,6 +46,17 @@ class idCredentials extends Model
         if (is_array($studentid)) {
             $user_exist = $this->whereIn('userid', $studentid)->find();
             return $user_exist;
+        }
+    }
+
+    public function getPdf($file, $id)
+    {   
+        $user = $this->where('userid', $id)->first();
+
+        if($user){
+            return $this->update($user['id'], [
+                'pdf' => $file
+            ]);
         }
     }
 }

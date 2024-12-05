@@ -198,4 +198,51 @@ class userPage extends BaseController
         return $this->response->setJSON($result);
 
     }
+
+    public function getIdCredentials()
+    {
+
+        return $this->response->setJSON([
+            'studCredentials' => $this->idCred->findAll()
+        ]);
+    }
+
+    public function makePdf()
+{
+    // Get the uploaded PDF file
+    $pdfFile = $this->request->getFile('pdf');
+
+    // Get the student IDs passed from the form
+    $studentIds = $this->request->getPost('studid'); // This will give an array of student IDs
+
+    // Debug: Log the student IDs and PDF file details
+    log_message('info', 'Student IDs: ' . json_encode($studentIds));
+    log_message('info', 'PDF file: ' . $pdfFile->getName());
+
+    // Check if the file is valid
+    if ($pdfFile->isValid() && !$pdfFile->hasMoved()) {
+        // Move the uploaded PDF file to a specific directory
+        $uploadPath = FCPATH . 'uploads/' . $studentIds . '/';
+        $newFileName = uniqid('pdf_', true) . '.' . $pdfFile->getExtension();
+        $pdfFile->move($uploadPath, $newFileName);
+
+        //update the pdf column in the studCredentials table
+        $result =$this->idCred->getPdf($newFileName, $studentIds);
+
+        return $this->response->setJSON([
+            'status' => 'success',
+            'message' => 'File uploaded successfully',
+            'file_name' => $newFileName,
+            'student_ids' => $studentIds,
+            'file_recieved' => $result
+        ]);
+    } else {
+        // Handle error if file upload failed
+        return $this->response->setJSON([
+            'status' => 'error',
+            'message' => 'No valid PDF file uploaded or file has already moved'
+        ]);
+    }
+}
+
 }
