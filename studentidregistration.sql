@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 25, 2024 at 01:13 PM
+-- Generation Time: Dec 10, 2024 at 04:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -49,7 +49,7 @@ INSERT INTO `admin` (`id`, `username`, `password`, `role`) VALUES
 
 CREATE TABLE `idcredentials` (
   `id` int(11) NOT NULL,
-  `userid` varchar(255) NOT NULL,
+  `userid` int(10) NOT NULL,
   `studentname` varchar(255) NOT NULL,
   `studentemail` varchar(255) NOT NULL,
   `studentphone` varchar(255) NOT NULL,
@@ -60,16 +60,17 @@ CREATE TABLE `idcredentials` (
   `alternativeaddress` varchar(255) NOT NULL,
   `emergencycontact` varchar(255) NOT NULL,
   `studentnumber` varchar(255) NOT NULL,
-  `image` text NOT NULL
+  `image` text NOT NULL,
+  `pdf` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `idcredentials`
 --
 
-INSERT INTO `idcredentials` (`id`, `userid`, `studentname`, `studentemail`, `studentphone`, `studentaddress`, `guardianname`, `guardianphone`, `guardianemail`, `alternativeaddress`, `emergencycontact`, `studentnumber`, `image`) VALUES
-(359, '123456', 'renedel ', 'rendel@gmail.com', '444444444', '123 Student St. ', 'Jane Doe', '5555555', 'guardian@gmail.com', 'guardian@gmail.com', '99999999', '20190410', 'asd_2.jfif'),
-(360, '111111', 'marcx', 'marcx@gmail.com', '11111111', '111 Antero St. ', 'Jane Doe ', '11111111111', 'guardian@gmail.com', '456 guardian Ave', '999999999', '20190410', 'asd_3.jfif');
+INSERT INTO `idcredentials` (`id`, `userid`, `studentname`, `studentemail`, `studentphone`, `studentaddress`, `guardianname`, `guardianphone`, `guardianemail`, `alternativeaddress`, `emergencycontact`, `studentnumber`, `image`, `pdf`) VALUES
+(375, 111111, 'marcx', 'marcx', 'marcx', 'marcx', 'marcx', 'marcx', 'marcx', 'marcx', 'marcx', 'marcx', 'download.jpg', 'pdf_67517329b52ef1.27865816.pdf'),
+(376, 123456, 'renedel', 'renedel', 'renedel', 'renedel', 'renedel', 'renedel', 'renedel', 'renedel', 'renedel', 'renedel', 'download.jpg', 'pdf_6751729027aa68.24191929.pdf');
 
 -- --------------------------------------------------------
 
@@ -89,7 +90,8 @@ CREATE TABLE `sidebar` (
 --
 
 INSERT INTO `sidebar` (`id`, `sidebar`, `icons`, `link`) VALUES
-(1, 'Home', 'fa-solid fa-house', 'Home');
+(1, 'Home', 'fa-solid fa-house', 'Home'),
+(2, 'Approved', 'fa-solid fa-list-ul', '/Approved');
 
 -- --------------------------------------------------------
 
@@ -112,8 +114,8 @@ CREATE TABLE `studentcred` (
 --
 
 INSERT INTO `studentcred` (`id`, `studid`, `studpass`, `user_progress`, `user_stage`, `status`, `studname`) VALUES
-(1, '123456', 'renedel', '100', 'stage2', 'waiting', 'renedel'),
-(2, '111111', 'marcx', '100', 'stage1', 'waiting', 'marcx'),
+(1, '123456', 'renedel', '100', 'stage2', 'approved', 'renedel'),
+(2, '111111', 'marcx', '100', 'stage2', 'approved', 'marcx'),
 (4, 'admin', 'admin', '', '', '', '');
 
 --
@@ -158,13 +160,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `idcredentials`
 --
 ALTER TABLE `idcredentials`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=377;
 
 --
 -- AUTO_INCREMENT for table `sidebar`
 --
 ALTER TABLE `sidebar`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `studentcred`
