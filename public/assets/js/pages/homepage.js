@@ -188,39 +188,78 @@ const homepage = async () => {
           body: JSON.stringify(data)
         });
 
-        const user_data = await data_response.json();
-        produceStudentPDF(user_data, formData);
+        const user_identity = await data_response.json();
+        const user_details = user_data;
+        produceStudentPDF(user_identity, formData, user_details);
       });
   });
 };
 
-const produceStudentPDF = async (user_data) => {
+const produceStudentPDF = async (user_identity, a, user_idData) => {
+  console.log(user_idData);
   const form = document.getElementById("myForm");
   const formData = new FormData(form);
 
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF();
-
-  let yPosition = 10;
+  pdf.setFontSize(12);
 
   const back = "/assets/images/back-1.jpg";
   const front = "/assets/images/front-1.jpg";
-
   pdf.addImage(front, "JPEG", 50, 10, 100, 100);
   pdf.addImage(back, "JPEG", 50, 120, 100, 100);
 
-  Object.entries(user_data).forEach(([key, value]) => {
-    pdf.text(`${key}: ${value}`, 10, yPosition);
-    yPosition += 10;
-    console.log(`${key}: ${value}`);
+  let yPosition = 10; // Initial vertical position
+
+  // Create variables to store each piece of data
+  let imageText = "";
+  let nameText = "";
+  let phoneText = "";
+  let numberText = "";
+  let addressText = "";
+  let path = "";
+
+  user_idData.forEach((item) => {
+    const concatData = {}; // Initialize for each item in the array
+
+    // Loop over the keys and values to build concatData
+    Object.entries(item).forEach(([key, value]) => {
+      concatData[key] = `${value}`; // Add key-value to concatData
+    });
+
+    // Concatenate the relevant information for each key into its respective variable
+    // imageText += `Image: ${concatData.image}\n`;
+    nameText += `${concatData.studentname}\n`;
+    phoneText += `${concatData.studentphone}\n`;
+    numberText += `${concatData.userid}\n`;
+    addressText += `${concatData.studentaddress}\n\n`; // Add spacing between users if needed
+    path += `/uploads/${concatData.userid}/${concatData.image}`;
   });
+
+  // Now control how to position and add each text outside the loop:
+
+  pdf.setFontSize(12);
+  yPosition += 20;
+  pdf.text(numberText, 83, yPosition);
+  yPosition += 6;
+  // const imgPath = `/assets/uploads/${concatData.userid}/${concatData.image}`;
+  pdf.addImage(path, 77, yPosition, 46, 31);
+  yPosition += 134;
+  pdf.text(nameText, 75, yPosition);
+  yPosition += 6;
+
+  pdf.text(addressText, 77, yPosition);
+  yPosition += 13;
+
+  pdf.text(phoneText, 84, yPosition);
+  yPosition += 20;
 
   const pdfBlob = pdf.output("blob");
 
   formData.append("pdf", pdfBlob, "student_report.pdf");
 
   const studentIds = [];
-  Object.entries(user_data).forEach(([key, value]) => {
+  Object.entries(user_identity).forEach(([key, value]) => {
     if (key.startsWith("studid")) {
       studentIds.push(value);
     }
@@ -230,9 +269,9 @@ const produceStudentPDF = async (user_data) => {
     formData.append(`studid`, id);
   });
 
-  for (let [key, value] of formData.entries()) {
-    console.log(`${key}: ${value}`);
-  }
+  // for (let [key, value] of formData.entries()) {
+  //   console.log(`${key}: ${value}`);
+  // }
 
   const response = await fetch("/generatepdf", {
     method: "POST",
