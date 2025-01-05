@@ -45,18 +45,46 @@ const homepage = async () => {
 
   console.log(filteredMatchedCredentials);
 
-  filteredMatchedCredentials.forEach((cred) => {
-    displayContainer.innerHTML += `
-        <div>
-                Student: ${cred.userid} <br>
-                        <a class="icon-link icon-link-hover" style="--bs-icon-link-transform: translate3d(0, -.125rem, 0);" href="/uploads/${cred.userid}/${cred.pdf}" download="${cred.pdf}">
-                                <svg class="bi" aria-hidden="true"><use xlink:href="#clipboard"></use></svg>
-                                ${cred.pdf}
-                        </a>
-                <hr>
+  displayContainer.innerHTML = `
+    <div class="container py-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+          <h6 class="card-title mb-0">Student Documents Checklist</h6>
         </div>
-        `;
-  });
+        <div class="card-body">
+          <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
+            ${filteredMatchedCredentials
+              .map(
+                (cred, index) => `
+              <div class="col">
+                <div class="card h-100 border">
+                  <div class="card-body p-3" style="font-size: 14px;">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                      <div class="avatar-sm bg-primary text-white border rounded-circle" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                        ${index + 1}
+                      </div>
+                      <div class="fw-medium" style="font-size: 14px;">Student ${
+                        cred.userid
+                      }</div>
+                    </div>
+                    <a class="btn btn-primary w-100" 
+                       href="/uploads/${cred.userid}/${cred.pdf}" 
+                       download="${cred.pdf}"
+                       style="font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                      <i class="bi bi-clipboard"></i>
+                      Download Document
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 };
 
 homepage();

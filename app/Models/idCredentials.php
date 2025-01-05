@@ -8,7 +8,7 @@ class idCredentials extends Model
 {
     protected $table = 'idcredentials';
     protected $primaryKey = "id";
-    protected $allowedFields = ['studentname','studentemail','studentphone','studentaddress','guardianname','guardianphone','guardianemail','alternativeaddress','emergencycontact','studentnumber','image','userid','pdf'];
+    protected $allowedFields = ['studentname','studentemail','studentphone','studentaddress','guardianname','guardianphone','guardianemail','alternativeaddress','emergencycontact','studentnumber','image','userid','pdf','course','bloodtype','gender'];
 
     public function adduser($data)
     {

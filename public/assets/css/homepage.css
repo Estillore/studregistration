@@ -20,3 +20,21 @@
 canvas {
   position: absolute;
 }
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.sidebar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  transition: top 0.3s ease; /* Smooth transition for the sticky effect */
+}

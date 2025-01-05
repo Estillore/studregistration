@@ -14,12 +14,15 @@
 export const updateAvatar = async (display, form) => {
   display.innerHTML += `
     <div class="container d-flex flex-column align-items-center" style="height: 300px;">
-        <div class="border" style="width:250px; height:250px;">
-          <img id="imagePreview" style="width:250px; height:250px;" />
+        <div class="border rounded-circle overflow-hidden" style="width:250px; height:250px;">
+          <img id="imagePreview" src="/assets/images/default-avatar.png" style="width:100%; height:100%; object-fit: cover;" />
         </div>
-        <input type="file" class="form-control m-3" id="inputGroupFile02" name="imageUpload" style="width:250px;">
+        <label for="inputGroupFile02" class="btn btn-primary mt-3 mb-2 fw-semibold" style="width:156px; height:32px; font-size:14px; line-height:24px;">
+          Choose Photo
+        </label>
+        <input type="file" class="form-control d-none" id="inputGroupFile02" name="imageUpload" accept="image/*">
         <canvas class="position-absolute" id="overlay" width="300" height="300" style="display: none;"></canvas>
-        <div id="statusMessage" style="color: red; margin-top: 10px;"></div>
+        <div id="statusMessage" class="text-center mt-2"></div>
     </div>
   `;
 
@@ -42,7 +45,7 @@ export const updateAvatar = async (display, form) => {
       ),
       faceapi.nets.faceExpressionNet.loadFromUri(
         "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js/weights/face_expression_model-weights_manifest.json"
-      )
+      ),
     ]);
     console.log("Face-api models loaded.");
   };
@@ -74,7 +77,7 @@ export const updateAvatar = async (display, form) => {
 
           const resizedDetections = faceapi.resizeResults(detections, {
             width: canvas.width,
-            height: canvas.height
+            height: canvas.height,
           });
 
           context.clearRect(0, 0, canvas.width, canvas.height);
@@ -142,7 +145,7 @@ const uploadImage = async (file, form) => {
 
     const response = await fetch("/uploadimage", {
       method: "POST",
-      body: myform
+      body: myform,
     });
 
     const result = await response.json();
@@ -159,8 +162,8 @@ const uploadImage = async (file, form) => {
       body: JSON.stringify({
         userid: user_id,
         stage: page,
-        progress: "100"
-      })
+        progress: "100",
+      }),
     });
 
     const progress_data = await user_progress.json();
@@ -175,8 +178,8 @@ const uploadImage = async (file, form) => {
       method: "POST",
       body: JSON.stringify({
         userid: user_id,
-        status: "waiting"
-      })
+        status: "waiting",
+      }),
     });
 
     const status_data = await user_status.json();

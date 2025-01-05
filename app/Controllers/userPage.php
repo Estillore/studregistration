@@ -37,6 +37,9 @@ class userPage extends BaseController
         $alternativeAddress = $this->request->getPost("alternativeAddress");
         $emergencyContact = $this->request->getPost("emergencyContact");
         $studentnumber = $this->request->getPost("studentnumber");
+        $gender = $this->request->getPost("gender");
+        $course = $this->request->getPost("course");
+        $bloodtype = $this->request->getPost("bloodtype");
 
         $data = [
             'studentname' => $studentName,
@@ -48,7 +51,10 @@ class userPage extends BaseController
             'guardianemail' => $guardianEmail,
             'alternativeaddress' => $alternativeAddress,
             'emergencycontact' => $emergencyContact,
-            'studentnumber' => $studentnumber
+            'studentnumber' => $studentnumber,
+            'gender' => $gender,
+            'course' => $course,
+            'bloodtype' => $bloodtype
         ];
 
         $this->idCred->adduser($data);

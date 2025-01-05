@@ -45,22 +45,41 @@ const homepage = async () => {
       console.log(users[j].studid);
       if (users[j].status === "waiting") {
         form.innerHTML += `
-          <div class="accordion fetch-id" id="accordion${users[j].id}" data-id="${users[j].studid}">
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${users[j].studid}" aria-expanded="true" aria-controls="collapse${users[j].studid}">
-                  Student ID: <span class="fw-bold" student-id="${users[j].studid}">${users[j].studid}</span>
+          <div class="accordion fetch-id mb-4" id="accordion${users[j].studid}" data-id="${users[j].studid}">
+            <div class="accordion-item border-0 shadow-sm bg-white">
+              <h2 class="accordion-header" id="heading${users[j].studid}">
+                <button 
+                  class="accordion-button collapsed fw-semibold bg-white text-dark" 
+                  style="font-size: 14px;" 
+                  type="button" 
+                  data-bs-toggle="collapse" 
+                  data-bs-target="#collapse${users[j].studid}" 
+                  aria-expanded="false" 
+                  aria-controls="collapse${users[j].studid}"
+                >
+                  <div class="d-flex align-items-center w-100">
+                    <div>
+                      <span class="text-muted fw-medium">Student ID:</span>
+                      <span class="ms-2 fw-medium">${users[j].studid}</span>
+                      <span class="text-muted ms-4 fw-medium">Name:</span>
+                      <span class="ms-2 fw-medium">${users[j].studname}</span>
+                    </div>
+                  </div>
                 </button>
               </h2>
-              <div id="collapse${users[j].studid}" class="accordion-collapse collapse show">
-                <div class="accordion-body">
-                  <div class="d-flex" id="studentCredentials${users[j].studid}">
+              <div 
+                id="collapse${users[j].studid}" 
+                class="accordion-collapse collapse" 
+                aria-labelledby="heading${users[j].studid}"
+              >
+                <div class="accordion-body p-4 bg-white">
+                  <div class="d-flex mb-4" id="studentCredentials${users[j].studid}">
                     <div id="imgContainer${users[j].studid}"></div>
                   </div>
                   <input class="visually-hidden" value="${users[j].studid}" name="student_data[]">
-                  <div class="text-end">
-                    <button class="btn btn-success btn-sm ms-auto" id="approve${users[j].studid}">approve</button>
-                    <button class="btn btn-danger btn-sm ms-2">reject</button>
+                  <div class="text-end mt-4">
+                    <button class="btn btn-outline-success px-4 me-2" style="width: 156px; font-size: 14px;" id="approve${users[j].studid}">Approve</button>
+                    <button class="btn btn-outline-danger px-4" style="width: 156px; font-size: 14px;" id="reject${users[j].studid}">Reject</button>
                   </div>
                 </div>
               </div>
@@ -75,7 +94,7 @@ const homepage = async () => {
 
   const data_response = await fetch("/getStudentCredits", {
     method: "POST",
-    body: formData
+    body: formData,
   });
 
   const user_data = await data_response.json();
@@ -90,76 +109,117 @@ const homepage = async () => {
     const idDisplay = document.getElementById(`imgContainer${user.userid}`);
 
     idDisplay.innerHTML += `
-      <img class="img-thumbnail" src="/uploads/${user.userid}/${user.image}" style="height:200px; width:300px;"></img>
+      <div class="thumbnail-container me-4">
+        <img 
+          class="img-thumbnail shadow-sm bg-white" 
+          src="/uploads/${user.userid}/${user.image}" 
+          style="
+            height: 150px; 
+            width: 150px; 
+            object-fit: cover; 
+            border-radius: 8px;
+          "
+          alt="Student ID Photo"
+        >
+      </div>
     `;
 
     studDisplay.innerHTML += `
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-4 mb-3">
+    <div class="container-fluid p-4 bg-white rounded-3 shadow-sm mb-4">
+      <!-- Personal Information Section -->
+      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Personal Information</h6>
+      <div class="row g-4 mb-4">
+        <div class="col-md-4">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Student Id</span> 
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.userid}" name="studentid${user.userid}" input="${user.userid}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Student ID</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.userid}" name="studentid${user.userid}" input="${user.userid}" readonly>
           </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-4">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Alternative Address</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.alternativeaddress}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Gender</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.gender}" readonly>
           </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-4">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Emergency Contact</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.emergencycontact}" readonly>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Guardian Email</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.guardianemail}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Guardian Name</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.guardianname}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Guardian Phone</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.guardianphone}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Blood Type</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.bloodtype}" readonly>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-4 mb-3">
+
+      <!-- Contact Information Section -->
+      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Contact Information</h6>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Student Address</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.studentaddress}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Email</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentemail}" readonly>
           </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Student Email</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.studentemail}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Phone</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentphone}" readonly>
           </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-12">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Student Number</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.studentnumber}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Address</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentaddress}" readonly>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Alternative Address</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.alternativeaddress}" readonly>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-4 mb-3">
+
+      <!-- Academic Information -->
+      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Academic Information</h6>
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
           <div class="input-group input-group-sm">
-            <span class="input-group-text" id="basic-addon1">Student Phone</span>
-            <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" value="${user.studentphone}" readonly>
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Student Number</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentnumber}" readonly>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Course</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.course}" readonly>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contact Information -->
+      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Emergency Contact Information</h6>
+      <div class="row g-4">
+        <div class="col-md-12">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Emergency Contact</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.emergencycontact}" readonly>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Guardian Name</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.guardianname}" readonly>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Guardian Email</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.guardianemail}" readonly>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Guardian Phone</span>
+            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.guardianphone}" readonly>
           </div>
         </div>
       </div>
@@ -171,8 +231,6 @@ const homepage = async () => {
     document
       .getElementById("approve" + user.userid)
       .addEventListener("click", async (e) => {
-        e.preventDefault();
-
         const studentIdInput = document.querySelector(
           `input[name="studentid${user.userid}"]`
         );
@@ -180,12 +238,12 @@ const homepage = async () => {
         console.log(studentIdValue);
 
         const data = {
-          studentid: studentIdValue
+          studentid: studentIdValue,
         };
 
         const data_response = await fetch("/userApproval", {
           method: "POST",
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
 
         const user_identity = await data_response.json();
@@ -218,6 +276,9 @@ const produceStudentPDF = async (user_identity, a, user_idData) => {
   let numberText = "";
   let addressText = "";
   let path = "";
+  let gender = "";
+  let bloodtype = "";
+  let course = "";
 
   user_idData.forEach((item) => {
     const concatData = {}; // Initialize for each item in the array
@@ -233,6 +294,10 @@ const produceStudentPDF = async (user_identity, a, user_idData) => {
     phoneText += `${concatData.studentphone}\n`;
     numberText += `${concatData.userid}\n`;
     addressText += `${concatData.studentaddress}\n\n`; // Add spacing between users if needed
+    gender = `${concatData.gender}\n`;
+    bloodtype = `${concatData.bloodtype}\n`;
+    course = `${concatData.course}\n`;
+    console.log(concatData);
     path += `/uploads/${concatData.userid}/${concatData.image}`;
   });
 
@@ -244,7 +309,17 @@ const produceStudentPDF = async (user_identity, a, user_idData) => {
   yPosition += 6;
   // const imgPath = `/assets/uploads/${concatData.userid}/${concatData.image}`;
   pdf.addImage(path, 77, yPosition, 46, 31);
-  yPosition += 134;
+  yPosition += 40;
+
+  pdf.setFontSize(30);
+  pdf.text(nameText, 84, yPosition);
+
+  pdf.setFontSize(25);
+  // yPosition += 10;
+  pdf.text(course, 93, yPosition + 10);
+
+  pdf.setFontSize(12);
+  yPosition += 94;
   pdf.text(nameText, 75, yPosition);
   yPosition += 6;
 
@@ -275,7 +350,7 @@ const produceStudentPDF = async (user_identity, a, user_idData) => {
 
   const response = await fetch("/generatepdf", {
     method: "POST",
-    body: formData
+    body: formData,
   });
 
   const data = await response.json();
