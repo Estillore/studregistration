@@ -36,221 +36,163 @@ const homepage = async () => {
 
   valid_users.push(valid_user);
   displayContainer.innerHTML += `
-    <form id="myForm"></form>
+  <div id="studentList">
+    <div class="" style="font-size: 14px;">
+      <table class="table table-bordered table-striped table-sm table-hover" id="studentTable" style="font-size: 14px;">
+        <thead>
+          <tr class="text-center">
+            <th class="align-middle sort fw-semibold" data-sort="student-id">Student ID</th>
+            <th class="align-middle sort fw-semibold" data-sort="gender">Gender</th>
+            <th class="align-middle sort fw-semibold" data-sort="blood-type">Blood Type</th>
+            <th class="align-middle sort fw-semibold" data-sort="email">Email</th>
+            <th class="align-middle sort fw-semibold" data-sort="phone">Phone</th>
+            <th class="align-middle sort fw-semibold" data-sort="address">Address</th>
+            <th class="align-middle sort fw-semibold" data-sort="alt-address">Alternative Address</th>
+            <th class="align-middle sort fw-semibold" data-sort="student-number">Student Number</th>
+            <th class="align-middle sort fw-semibold" data-sort="course">Course</th>
+            <th class="align-middle sort fw-semibold" data-sort="emergency-contact">Emergency Contact</th>
+            <th class="align-middle sort fw-semibold" data-sort="guardian-name">Guardian Name</th>
+            <th class="align-middle sort fw-semibold" data-sort="guardian-email">Guardian Email</th>
+            <th class="align-middle sort fw-semibold" data-sort="guardian-phone">Guardian Phone</th>
+            <th class="align-middle sort fw-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentCredentials" class="list">
+          <!-- Student rows will be populated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+`;
+
+  const studentRow = document.getElementById("studentCredentials");
+
+  const response = await fetch("/getStudentRow", { method: "GET" });
+  const data = await response.json();
+  let index = 0;
+  data.user_data.forEach((user) => {
+    index++;
+    studentRow.innerHTML += `
+    <tr class="text-center">
+      <td class="align-middle student-id">${user.userid}</td>
+      <td class="align-middle gender">${user.gender}</td>
+      <td class="align-middle blood-type">${user.bloodtype}</td>
+      <td class="align-middle email">${user.studentemail}</td>
+      <td class="align-middle phone">${user.studentphone}</td>
+      <td class="align-middle address">${user.studentaddress}</td>
+      <td class="align-middle alt-address">${user.alternativeaddress}</td>
+      <td class="align-middle student-number">${user.studentnumber}</td>
+      <td class="align-middle course">${user.course}</td>
+      <td class="align-middle emergency-contact">${user.emergencycontact}</td>
+      <td class="align-middle guardian-name">${user.guardianname}</td>
+      <td class="align-middle guardian-email">${user.guardianemail}</td>
+      <td class="align-middle guardian-phone">${user.guardianphone}</td>
+      <td class="align-middle" style="gap: 10px;">
+        <a type="button" class="btn btn-success approve-btn m-1" id="approve-${user.userid}" style="height: 32px; width: 32px; text-align: center; padding: 0;">
+          <i class="fas fa-check" style="line-height: 32px;"></i>
+        </a>
+        <a class="btn btn-danger reject-btn m-1" id="reject${user.userid}" style="height: 32px; width: 32px; text-align: center; padding: 0;">
+          <i class="fas fa-times" style="line-height: 32px;"></i>
+        </a>
+      </td>
+    </tr>
   `;
 
-  const form = document.getElementById("myForm");
-  valid_users.forEach((users) => {
-    for (let j = 0; j < users.length; j++) {
-      console.log(users[j].studid);
-      if (users[j].status === "waiting") {
-        form.innerHTML += `
-          <div class="accordion fetch-id mb-4" id="accordion${users[j].studid}" data-id="${users[j].studid}">
-            <div class="accordion-item border-0 shadow-sm bg-white">
-              <h2 class="accordion-header" id="heading${users[j].studid}">
-                <button 
-                  class="accordion-button collapsed fw-semibold bg-white text-dark" 
-                  style="font-size: 14px;" 
-                  type="button" 
-                  data-bs-toggle="collapse" 
-                  data-bs-target="#collapse${users[j].studid}" 
-                  aria-expanded="false" 
-                  aria-controls="collapse${users[j].studid}"
-                >
-                  <div class="d-flex align-items-center w-100">
-                    <div>
-                      <span class="text-muted fw-medium">Student ID:</span>
-                      <span class="ms-2 fw-medium">${users[j].studid}</span>
-                      <span class="text-muted ms-4 fw-medium">Name:</span>
-                      <span class="ms-2 fw-medium">${users[j].studname}</span>
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div 
-                id="collapse${users[j].studid}" 
-                class="accordion-collapse collapse" 
-                aria-labelledby="heading${users[j].studid}"
-              >
-                <div class="accordion-body p-4 bg-white">
-                  <div class="d-flex mb-4" id="studentCredentials${users[j].studid}">
-                    <div id="imgContainer${users[j].studid}"></div>
-                  </div>
-                  <input class="visually-hidden" value="${users[j].studid}" name="student_data[]">
-                  <div class="text-end mt-4">
-                    <button class="btn btn-outline-success px-4 me-2" style="width: 156px; font-size: 14px;" id="approve${users[j].studid}">Approve</button>
-                    <button class="btn btn-outline-danger px-4" style="width: 156px; font-size: 14px;" id="reject${users[j].studid}">Reject</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-    }
+    //todo: add event listeners to the approve and reject buttons
   });
 
-  const formData = new FormData(form);
-
-  const data_response = await fetch("/getStudentCredits", {
-    method: "POST",
-    body: formData,
+  $("#studentTable").DataTable({
+    paging: true,
+    searching: true,
+    ordering: true,
+    info: true,
+    lengthMenu: [5, 10, 25, 50],
+    language: {
+      search: "Filter records:",
+      lengthMenu: "Show _MENU_ entries",
+      info: "Showing _START_ to _END_ of _TOTAL_ entries",
+    },
+    autoWidth: true,
   });
 
-  const user_data = await data_response.json();
+  // const formData = new FormData(form);
 
-  user_data.forEach((user) => {
-    console.log(user.userid);
+  // const data_response = await fetch("/getStudentCredits", {
+  //   method: "POST",
+  //   body: formData,
+  // });
 
-    const studDisplay = document.getElementById(
-      "studentCredentials" + user.userid
-    );
+  // const user_data = await data_response.json();
 
-    const idDisplay = document.getElementById(`imgContainer${user.userid}`);
+  // user_data.forEach((user) => {
+  //   console.log(user);
+  //   console.log(user.userid);
 
-    idDisplay.innerHTML += `
-      <div class="thumbnail-container me-4">
-        <img 
-          class="img-thumbnail shadow-sm bg-white" 
-          src="/uploads/${user.userid}/${user.image}" 
-          style="
-            height: 150px; 
-            width: 150px; 
-            object-fit: cover; 
-            border-radius: 8px;
-          "
-          alt="Student ID Photo"
-        >
-      </div>
-    `;
+  //   const studDisplay = document.getElementById("studentCredentials");
 
-    studDisplay.innerHTML += `
-    <div class="container-fluid p-4 bg-white rounded-3 shadow-sm mb-4">
-      <!-- Personal Information Section -->
-      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Personal Information</h6>
-      <div class="row g-4 mb-4">
-        <div class="col-md-4">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Student ID</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.userid}" name="studentid${user.userid}" input="${user.userid}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Gender</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.gender}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Blood Type</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.bloodtype}" readonly>
-          </div>
-        </div>
-      </div>
+  //   console.log(studDisplay);
 
-      <!-- Contact Information Section -->
-      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Contact Information</h6>
-      <div class="row g-4 mb-4">
-        <div class="col-md-6">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Email</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentemail}" readonly>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Phone</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentphone}" readonly>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Address</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentaddress}" readonly>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Alternative Address</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.alternativeaddress}" readonly>
-          </div>
-        </div>
-      </div>
+  //   const idDisplay = document.getElementById(`imgContainer${user.userid}`);
 
-      <!-- Academic Information -->
-      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Academic Information</h6>
-      <div class="row g-4 mb-4">
-        <div class="col-md-6">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Student Number</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.studentnumber}" readonly>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Course</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.course}" readonly>
-          </div>
-        </div>
-      </div>
+  //   idDisplay.innerHTML += `
+  //     <div class="thumbnail-container me-4">
+  //       <img
+  //         class="img-thumbnail shadow-sm bg-white"
+  //         src="/uploads/${user.userid}/${user.image}"
+  //         style="
+  //           height: 150px;
+  //           width: 150px;
+  //           object-fit: cover;
+  //           border-radius: 8px;
+  //         "
+  //         alt="Student ID Photo"
+  //       >
+  //     </div>
+  //   `;
 
-      <!-- Emergency Contact Information -->
-      <h6 class="mb-4 text-dark fw-semibold border-bottom pb-2">Emergency Contact Information</h6>
-      <div class="row g-4">
-        <div class="col-md-12">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Emergency Contact</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.emergencycontact}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Guardian Name</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.guardianname}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Guardian Email</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.guardianemail}" readonly>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="input-group input-group-sm">
-            <span class="input-group-text bg-light text-dark border fw-semibold" style="font-size: 14px;">Guardian Phone</span>
-            <input type="text" class="form-control bg-white" style="font-size: 14px;" value="${user.guardianphone}" readonly>
-          </div>
-        </div>
-      </div>
-    </div>
-    `;
+  //   studDisplay.innerHTML += `
+  //   <tr>
+  //     <td>${user.userid}</td>
+  //     <td>${user.gender}</td>
+  //     <td>${user.bloodtype}</td>
+  //     <td>${user.studentemail}</td>
+  //     <td>${user.studentphone}</td>
+  //     <td>${user.studentaddress}</td>
+  //     <td>${user.alternativeaddress}</td>
+  //     <td>${user.studentnumber}</td>
+  //     <td>${user.course}</td>
+  //     <td>${user.emergencycontact}</td>
+  //     <td>${user.guardianname}</td>
+  //     <td>${user.guardianemail}</td>
+  //     <td>${user.guardianphone}</td>
+  //   </tr>
+  //   `;
 
-    console.log(document.getElementById("approve" + user.userid));
+  //   console.log(document.getElementById("approve" + user.userid));
 
-    document
-      .getElementById("approve" + user.userid)
-      .addEventListener("click", async (e) => {
-        const studentIdInput = document.querySelector(
-          `input[name="studentid${user.userid}"]`
-        );
-        const studentIdValue = studentIdInput ? studentIdInput.value : null;
-        console.log(studentIdValue);
+  //   document
+  //     .getElementById("approve" + user.userid)
+  //     .addEventListener("click", async (e) => {
+  //       const studentIdInput = document.querySelector(
+  //         `input[name="studentid${user.userid}"]`
+  //       );
+  //       const studentIdValue = studentIdInput ? studentIdInput.value : null;
+  //       console.log(studentIdValue);
 
-        const data = {
-          studentid: studentIdValue,
-        };
+  //       const data = {
+  //         studentid: studentIdValue,
+  //       };
 
-        const data_response = await fetch("/userApproval", {
-          method: "POST",
-          body: JSON.stringify(data),
-        });
+  //       const data_response = await fetch("/userApproval", {
+  //         method: "POST",
+  //         body: JSON.stringify(data),
+  //       });
 
-        const user_identity = await data_response.json();
-        const user_details = user_data;
-        produceStudentPDF(user_identity, formData, user_details);
-      });
-  });
+  //       const user_identity = await data_response.json();
+  //       const user_details = user_data;
+  //       produceStudentPDF(user_identity, formData, user_details);
+  //     });
+  // });
 };
 
 const produceStudentPDF = async (user_identity, a, user_idData) => {

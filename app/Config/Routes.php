@@ -5,7 +5,12 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index');
+
+ //landing page
+$routes->get('/' , 'landingPage::index');
+
+//login and register here.
+$routes->get('/login', 'Home::index');
 $routes->post('/Home/Login' , "Home::LoginUsers");
 $routes->post('/Home/adminLogin' , "Home::adminLogin");
 
@@ -26,10 +31,11 @@ $routes->post('/updateUserId' , 'userPage::updateUserId');
 //get user credits
 $routes->post('/getStudentCredits', 'userPage::userCredentials');
 $routes->post('/userApproval' , 'userPage::requestApproval');
-
+$routes->get('/getStudentRow' , 'userPage::getStudentRow');
 //generate pdf
 $routes->post('/generatepdf', 'userpage::makePdf');
 
 //checkList
 $routes->get('/Approved' , 'checkList::index');
 $routes->get('/studentIdCredits', 'userPage::getIdCredentials');
+

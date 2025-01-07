@@ -193,6 +193,15 @@ class userPage extends BaseController
         }
     }
     
+    public function getStudentRow()
+    {
+        $response = [
+            'status' => true,
+            'user_data' => $this->idCred->findAll()
+        ];
+
+        return $this->response->setJSON($response);
+    }
 
     public function requestApproval()
     {
