@@ -214,6 +214,15 @@ class userPage extends BaseController
 
     }
 
+    public function getStudentData()
+    {
+        $input = $this->request->getBody();
+        $input_array = json_decode($input, true);
+
+        $result = $this->idCred->getStudentRow($input_array);
+        return $this->response->setJSON($result);
+    }
+
     public function getIdCredentials()
     {
 

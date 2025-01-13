@@ -59,4 +59,13 @@ class idCredentials extends Model
             ]);
         }
     }
+
+    public function getStudentRow($input)
+    {
+        if(is_array($input)){
+            $user_exist = $this->whereIn('userid', $input)->find();
+            return $user_exist;
+        }
+    }
+
 }

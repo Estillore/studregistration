@@ -32,6 +32,7 @@ $routes->post('/updateUserId' , 'userPage::updateUserId');
 $routes->post('/getStudentCredits', 'userPage::userCredentials');
 $routes->post('/userApproval' , 'userPage::requestApproval');
 $routes->get('/getStudentRow' , 'userPage::getStudentRow');
+$routes->post('/getStudentData' , 'userPage::getStudentData');
 //generate pdf
 $routes->post('/generatepdf', 'userpage::makePdf');
 
