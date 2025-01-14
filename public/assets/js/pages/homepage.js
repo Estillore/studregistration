@@ -141,8 +141,9 @@ const buttonFunction = async () => {
         }
 
         const data = await response.json();
-
-        console.log(data);
+        if (response.ok) {
+          window.location.reload();
+        }
       } catch (error) {
         console.error(error);
       }

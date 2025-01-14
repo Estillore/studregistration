@@ -28,6 +28,8 @@ $routes->post('/uploadimage' , 'userPage::uploadImage');
 $routes->post('/updateProgress' , 'userPage::updateProgress');
 $routes->post('/updateUserId' , 'userPage::updateUserId');
 
+$routes->get('/downloadImage', 'downloadPage::index');
+
 //get user credits
 $routes->post('/getStudentCredits', 'userPage::userCredentials');
 $routes->post('/userApproval' , 'userPage::requestApproval');
